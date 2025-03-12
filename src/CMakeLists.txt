@@ -8,7 +8,11 @@ find_package(Crow CONFIG REQUIRED)
 add_executable(ElPricesWebServer
         main.cpp
         ElPricesWebServerController.cpp
-        ElPricesWebServerController.h
+        include/ElPricesWebServer/ElPricesWebServerController.h
+        include/ElPricesWebServer/ServePoint.h
+        include/ElPricesWebServer/EndPoint.h
+        include/ElPricesWebServer/IElPricesWebServer.h
         )
 
 target_link_libraries(ElPricesWebServer PUBLIC Utility)
+target_include_directories(ElPricesWebServer PUBLIC include)
