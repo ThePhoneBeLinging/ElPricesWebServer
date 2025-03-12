@@ -1,4 +1,6 @@
-#include "include/ElPricesWebServer/ElPricesWebServerController.h"
+#include <iostream>
+
+#include "ElPricesWebServer/ElPricesWebServerController.h"
 
 int main()
 {

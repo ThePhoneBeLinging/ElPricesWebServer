@@ -5,8 +5,7 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_MODULE_PATH "/usr/lib/cmake/Crow")
 find_package(Crow CONFIG REQUIRED)
 
-add_executable(ElPricesWebServer
-        main.cpp
+add_library(ElPricesWebServer
         ElPricesWebServerController.cpp
         include/ElPricesWebServer/ElPricesWebServerController.h
         include/ElPricesWebServer/ServePoint.h
