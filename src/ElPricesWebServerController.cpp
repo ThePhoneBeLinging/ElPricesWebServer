@@ -6,15 +6,16 @@
 
 #include "Utility/Utility.h"
 
-ElPricesWebServerController::ElPricesWebServerController()
-{
-  thread_ = std::thread(&ElPricesWebServerController::launch,this);
-}
 
 ElPricesWebServerController::~ElPricesWebServerController()
 {
   app_.stop();
   thread_.join();
+}
+
+void ElPricesWebServerController::startServer()
+{
+  thread_ = std::thread(&ElPricesWebServerController::launch,this);
 }
 
 void ElPricesWebServerController::launch()

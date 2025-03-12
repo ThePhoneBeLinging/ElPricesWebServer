@@ -6,6 +6,7 @@
 
 int main()
 {
-  ElPricesWebServerController();
+  auto var = new ElPricesWebServerController();
+  std::this_thread::sleep_for(std::chrono::seconds(2));
   return 0;
 }

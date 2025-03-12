@@ -11,8 +11,9 @@
 class ElPricesWebServerController
 {
 public:
-  ElPricesWebServerController();
+  ElPricesWebServerController() = default;
   ~ElPricesWebServerController();
+  void startServer();
 private:
   void launch();
   crow::SimpleApp app_;
