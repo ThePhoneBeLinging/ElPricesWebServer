@@ -14,6 +14,7 @@ ElPricesWebServerController::~ElPricesWebServerController()
 
 void ElPricesWebServerController::startServer()
 {
+  app_.loglevel(crow::LogLevel::Error);
   thread_ = std::thread(&ElPricesWebServerController::launch,this);
 }
 
