@@ -3,3 +3,27 @@
 //
 
 #include "ElPricesWebServerController.h"
+
+#include "Utility/Utility.h"
+
+ElPricesWebServerController::ElPricesWebServerController()
+{
+  thread_ = std::thread(&ElPricesWebServerController::launch,this);
+}
+
+ElPricesWebServerController::~ElPricesWebServerController()
+{
+  app_.stop();
+  thread_.join();
+}
+
+void ElPricesWebServerController::launch()
+{
+
+  CROW_ROUTE(app_, "/")([](){
+    auto page = Utility::readFromFile("../../FilesToServe/index.html");
+    return page;
+  });
+  app_.port(18080);
+  app_.run();
+}

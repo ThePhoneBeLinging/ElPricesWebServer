@@ -10,3 +10,5 @@ add_executable(ElPricesWebServer
         ElPricesWebServerController.cpp
         ElPricesWebServerController.h
         )
+
+target_link_libraries(ElPricesWebServer PUBLIC Utility)
