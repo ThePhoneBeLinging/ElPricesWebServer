@@ -31,9 +31,13 @@ void ElPricesWebServerController::launch()
     return page;
   });
 
-  app_.route_dynamic("/<string>/<string>")([](std::string from, std::string to)-> std::string
+  app_.route_dynamic("/getDataBetweenDates")([](const crow::request& req)
   {
-    return from + " " + to;
+    std::string date1 = req.url_params.get("date1");
+    std::string hour1 = req.url_params.get("hour1");
+    std::string date2 = req.url_params.get("date2");
+    std::string hour2 = req.url_params.get("hour2");
+    return crow::response(200, date1);
   });
 
   app_.port(18080);

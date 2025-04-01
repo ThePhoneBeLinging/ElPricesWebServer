@@ -63,10 +63,10 @@
         }
 
         try {
-            const request = `localhost:18080/${date1}-${hour1};${date2}-${hour2}`;
-            responseDiv.textContent = request;
-            return;
+            const request = `http://localhost:18080/getDataBetweenDates?date1=${date1}&hour1=${hour1}&date2=${date2}&hour2=${hour2}`;
             const response = await fetch(request);
+            responseDiv.textContent = await response.text();
+            return;
             const data = await response.json();
             responseDiv.textContent = JSON.stringify(data, null, 2);
         } catch (error) {
