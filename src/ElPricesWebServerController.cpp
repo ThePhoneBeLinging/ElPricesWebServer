@@ -20,24 +20,33 @@ void ElPricesWebServerController::startServer()
 
 void ElPricesWebServerController::launch()
 {
-  app_.route_dynamic("/")([]()-> std::string
+  CROW_ROUTE(app_,"/")([]()-> std::string
   {
     auto page = Utility::readFromFile("../../FilesToServe/index.html");
     return page;
   });
-  app_.route_dynamic("/input")([]()-> std::string
+  CROW_ROUTE(app_,"/input")([]()-> std::string
   {
     auto page = Utility::readFromFile("../../FilesToServe/input.html");
     return page;
   });
 
-  app_.route_dynamic("/getDataBetweenDates")([](const crow::request& req)
+  CROW_ROUTE(app_, "/getDataBetweenDates")([](const crow::request& req)
   {
-    std::string date1 = req.url_params.get("date1");
-    std::string hour1 = req.url_params.get("hour1");
-    std::string date2 = req.url_params.get("date2");
-    std::string hour2 = req.url_params.get("hour2");
-    return crow::response(200, date1);
+    try
+    {
+      std::string date1 = req.url_params.get("date1");
+      std::string hour1 = req.url_params.get("hour1");
+      std::string date2 = req.url_params.get("date2");
+      std::string hour2 = req.url_params.get("hour2");
+
+
+      return crow::response(200);
+    }
+    catch (...)
+    {
+      return crow::response(400);
+    }
   });
 
   app_.port(18080);
