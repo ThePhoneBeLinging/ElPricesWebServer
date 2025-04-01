@@ -8,7 +8,9 @@ find_package(Crow CONFIG REQUIRED)
 add_library(ElPricesWebServer
         ElPricesWebServerController.cpp
         include/ElPricesWebServer/ElPricesWebServerController.h
+        HistoricEntry.h
 )
 
 target_link_libraries(ElPricesWebServer PUBLIC Utility)
+target_link_libraries(ElPricesWebServer PUBLIC DatabaseAccessController)
 target_include_directories(ElPricesWebServer PUBLIC include)
