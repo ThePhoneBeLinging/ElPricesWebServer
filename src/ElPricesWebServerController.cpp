@@ -72,8 +72,23 @@ void ElPricesWebServerController::launch()
 
       while (year1 != year2 || month1 != month2 || day1 != day2 || hour1 != hour2)
       {
-        HistoricEntry historicEntry;
-        std::string dayString = std::to_string(day1) + "." + std::to_string(month1) + "." +std::to_string(year1);
+        HistoricEntry historicEntry = HistoricEntry();
+        std::string dayString = "";
+        if (day1 < 10)
+        {
+          dayString += "0";
+        }
+        dayString += std::to_string(day1);
+        dayString += ".";
+        if (month1 < 10)
+        {
+          dayString += "0";
+        }
+
+        dayString += std::to_string(month1);
+        dayString += ".";
+        dayString += std::to_string(year1);
+
         std::string getPriceQuery = "SELECT * FROM Prices WHERE Hour == ? AND Date==?";
         SQLite::Statement getPriceStatement(*priceDBLock->getDatabase(),getPriceQuery);
         getPriceStatement.bind(1,hour1);
@@ -96,7 +111,8 @@ void ElPricesWebServerController::launch()
           std::string getPulsesQuery = "SELECT * FROM PulseHours WHERE PulseDateID==? AND Hour==?";
           SQLite::Statement getPulsesStatement(*pulseDBLock->getDatabase(),getPulseIDQuery);
           getPulsesStatement.bind(1,pulseDateID);
-          getPulsesStatement.bind(2,hour1);
+          std::string hourString = hour1 < 10 ? "0" + std::to_string(hour1) : std::to_string(hour1);
+          getPulsesStatement.bind(2,hourString);
           while (getPulsesStatement.executeStep())
           {
             historicEntry.pulses = getPulsesStatement.getColumn(2).getInt();
@@ -114,7 +130,7 @@ void ElPricesWebServerController::launch()
           day1++;
           if (day1 == 32)
           {
-            day1 = 0;
+            day1 = 1;
             month1++;
             if (month1 == 13)
             {
