@@ -168,7 +168,6 @@ void ElPricesWebServerController::launch()
       returnString += "\"TotalPrice\":" + std::to_string(totalPrice) +",\n";
       returnString += "\"TotalWH\":" + std::to_string(totalWHUsed) +"\n";
       returnString += "}";
-      std::cout << returnString << "\n";
       return crow::response(returnString);
     }
     catch (const std::exception& e)
@@ -180,5 +179,4 @@ void ElPricesWebServerController::launch()
 
   app_.port(18080);
   app_.run();
-  std::cout << "EXITING WEBSERVER" << std::endl;
 }
