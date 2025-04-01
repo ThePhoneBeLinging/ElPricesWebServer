@@ -11,8 +11,12 @@ struct HistoricEntry
   int month;
   int day;
   int hour;
-  int whUsed;
+  int pulses;
   int price;
+  bool operator==(std::vector<HistoricEntry>::const_reference value) const
+  {
+    return year == value.year && month == value.month && day == value.day && hour == value.hour && pulses == value.pulses && price == value.price;
+  }
 };
 
 

@@ -36,13 +36,15 @@ void ElPricesWebServerController::launch()
     return page;
   });
 
-  CROW_ROUTE(app_, "/reloadConfig")([]()-> void
+  CROW_ROUTE(app_, "/reloadConfig")([]()-> std::string
   {
     ConfigController::loadConfig("../../Resources/config.json");
+    return "";
   });
 
   CROW_ROUTE(app_, "/getDataBetweenDates")([](const crow::request& req)
   {
+    std::vector<HistoricEntry> historicEntries;
     try
     {
       std::string year1String = req.url_params.get("year1");
@@ -64,13 +66,46 @@ void ElPricesWebServerController::launch()
       int day2 = std::stoi(day2String);
       int hour2 = std::stoi(hour2String);
 
-      std::vector<HistoricEntry> historicEntries;
 
-      while (year1 != year2 && month1 != month2 && day1 != day2 && hour1 != hour2)
+      auto pulseDBLock = DatabaseAccessController::getDatabase("PULSEDB");
+      auto priceDBLock = DatabaseAccessController::getDatabase("PRICEDB");
+
+      while (year1 != year2 || month1 != month2 || day1 != day2 || hour1 != hour2)
       {
         HistoricEntry historicEntry;
+        std::string dayString = std::to_string(day1) + "." + std::to_string(month1) + "." +std::to_string(year1);
+        std::string getPriceQuery = "SELECT * FROM Prices WHERE Hour == ? AND Date==?";
+        SQLite::Statement getPriceStatement(*priceDBLock->getDatabase(),getPriceQuery);
+        getPriceStatement.bind(1,hour1);
+        getPriceStatement.bind(2,dayString);
 
+        while (getPriceStatement.executeStep())
+        {
+          historicEntry.price = getPriceStatement.getColumn(1).getInt();
+          historicEntry.price += getPriceStatement.getColumn(2).getInt();
+        }
 
+        std::string getPulseIDQuery = "SELECT ID FROM PulseDates WHERE Year==? AND Month==? AND Day==?";
+        SQLite::Statement getPulseIDStatement(*pulseDBLock->getDatabase(),getPulseIDQuery);
+        getPulseIDStatement.bind(1,year1);
+        getPulseIDStatement.bind(2,month1);
+        getPulseIDStatement.bind(3,day1);
+        while (getPulseIDStatement.executeStep())
+        {
+          int pulseDateID = getPulseIDStatement.getColumn(0).getInt();
+          std::string getPulsesQuery = "SELECT * FROM PulseHours WHERE PulseDateID==? AND Hour==?";
+          SQLite::Statement getPulsesStatement(*pulseDBLock->getDatabase(),getPulseIDQuery);
+          getPulsesStatement.bind(1,pulseDateID);
+          getPulsesStatement.bind(2,hour1);
+          while (getPulsesStatement.executeStep())
+          {
+            historicEntry.pulses = getPulsesStatement.getColumn(2).getInt();
+          }
+        }
+        historicEntry.hour = hour1;
+        historicEntry.day = day1;
+        historicEntry.month = month1;
+        historicEntry.year = year1;
         historicEntries.push_back(historicEntry);
         hour1++;
         if (hour1 == 24)
@@ -89,16 +124,44 @@ void ElPricesWebServerController::launch()
           }
         }
       }
-
-
-      return crow::response(200);
+      int totalWHUsed = 0;
+      int totalPrice = 0;
+      std::string returnString;
+      returnString += "{\n";
+      returnString += "[\n";
+      for (auto entry : historicEntries)
+      {
+        returnString += "{\n";
+        returnString += "\"Year\":" + std::to_string(entry.year) +"\n";
+        returnString += "\"Month\":" + std::to_string(entry.month) +"\n";
+        returnString += "\"Day\":" + std::to_string(entry.day) +"\n";
+        returnString += "\"Hour\":" + std::to_string(entry.hour) +"\n";
+        returnString += "\"Price\":" + std::to_string(entry.price) +"\n";
+        returnString += "\"Pulses\":" + std::to_string(entry.pulses) +"\n";
+        returnString += "\"UsageDKK\":" + std::to_string(entry.price * entry.pulses) +"\n";
+        returnString += "}";
+        totalWHUsed += entry.pulses;
+        totalPrice += entry.price * entry.pulses;
+        if (entry != historicEntries.back())
+        {
+          returnString += ",\n";
+        }
+      }
+      returnString += "\n]\n";
+      returnString += "\"TotalPrice\":" + std::to_string(totalPrice) +"\n";
+      returnString += "\"TotalWH\":" + std::to_string(totalWHUsed) +"\n";
+      returnString += "}";
+      std::cout << returnString << "\n";
+      return crow::response(returnString);
     }
-    catch (...)
+    catch (const std::exception& e)
     {
-      return crow::response(400);
+      std::string msg = e.what();
+      return crow::response(400, msg);
     }
   });
 
   app_.port(18080);
   app_.run();
+  std::cout << "EXITING WEBSERVER" << std::endl;
 }
