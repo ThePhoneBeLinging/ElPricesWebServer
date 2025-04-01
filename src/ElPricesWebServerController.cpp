@@ -128,16 +128,17 @@ void ElPricesWebServerController::launch()
       int totalPrice = 0;
       std::string returnString;
       returnString += "{\n";
+      returnString += "\"historicPrices\": ";
       returnString += "[\n";
       for (auto entry : historicEntries)
       {
         returnString += "{\n";
-        returnString += "\"Year\":" + std::to_string(entry.year) +"\n";
-        returnString += "\"Month\":" + std::to_string(entry.month) +"\n";
-        returnString += "\"Day\":" + std::to_string(entry.day) +"\n";
-        returnString += "\"Hour\":" + std::to_string(entry.hour) +"\n";
-        returnString += "\"Price\":" + std::to_string(entry.price) +"\n";
-        returnString += "\"Pulses\":" + std::to_string(entry.pulses) +"\n";
+        returnString += "\"Year\":" + std::to_string(entry.year) +",\n";
+        returnString += "\"Month\":" + std::to_string(entry.month) +",\n";
+        returnString += "\"Day\":" + std::to_string(entry.day) +",\n";
+        returnString += "\"Hour\":" + std::to_string(entry.hour) +",\n";
+        returnString += "\"Price\":" + std::to_string(entry.price) +",\n";
+        returnString += "\"Pulses\":" + std::to_string(entry.pulses) +",\n";
         returnString += "\"UsageDKK\":" + std::to_string(entry.price * entry.pulses) +"\n";
         returnString += "}";
         totalWHUsed += entry.pulses;
@@ -147,8 +148,8 @@ void ElPricesWebServerController::launch()
           returnString += ",\n";
         }
       }
-      returnString += "\n]\n";
-      returnString += "\"TotalPrice\":" + std::to_string(totalPrice) +"\n";
+      returnString += "],\n";
+      returnString += "\"TotalPrice\":" + std::to_string(totalPrice) +",\n";
       returnString += "\"TotalWH\":" + std::to_string(totalWHUsed) +"\n";
       returnString += "}";
       std::cout << returnString << "\n";
