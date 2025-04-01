@@ -109,10 +109,9 @@ void ElPricesWebServerController::launch()
         {
           int pulseDateID = getPulseIDStatement.getColumn(0).getInt();
           std::string getPulsesQuery = "SELECT * FROM PulseHours WHERE PulseDateID==? AND Hour==?";
-          SQLite::Statement getPulsesStatement(*pulseDBLock->getDatabase(),getPulseIDQuery);
+          SQLite::Statement getPulsesStatement(*pulseDBLock->getDatabase(),getPulsesQuery);
           getPulsesStatement.bind(1,pulseDateID);
-          std::string hourString = hour1 < 10 ? "0" + std::to_string(hour1) : std::to_string(hour1);
-          getPulsesStatement.bind(2,hourString);
+          getPulsesStatement.bind(2,hour1);
           while (getPulsesStatement.executeStep())
           {
             historicEntry.pulses = getPulsesStatement.getColumn(2).getInt();
