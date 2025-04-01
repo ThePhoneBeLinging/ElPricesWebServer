@@ -7,6 +7,7 @@
 #include <DatabaseAccessController/DatabaseAccessController.h>
 
 #include "HistoricEntry.h"
+#include "Utility/ConfigController.h"
 #include "Utility/Utility.h"
 
 
@@ -33,6 +34,11 @@ void ElPricesWebServerController::launch()
   {
     auto page = Utility::readFromFile("../../FilesToServe/input.html");
     return page;
+  });
+
+  CROW_ROUTE(app_, "/reloadConfig")([]()-> void
+  {
+    ConfigController::loadConfig("../../Resources/config.json");
   });
 
   CROW_ROUTE(app_, "/getDataBetweenDates")([](const crow::request& req)
