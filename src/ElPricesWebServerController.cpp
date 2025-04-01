@@ -147,17 +147,18 @@ void ElPricesWebServerController::launch()
       returnString += "[\n";
       for (auto entry : historicEntries)
       {
+        double price = entry.price / 10000.0;
         returnString += "{\n";
         returnString += "\"Year\":" + std::to_string(entry.year) +",\n";
         returnString += "\"Month\":" + std::to_string(entry.month) +",\n";
         returnString += "\"Day\":" + std::to_string(entry.day) +",\n";
         returnString += "\"Hour\":" + std::to_string(entry.hour) +",\n";
-        returnString += "\"Price\":" + std::to_string(entry.price) +",\n";
+        returnString += "\"Price\":" + std::to_string(price) +",\n";
         returnString += "\"Pulses\":" + std::to_string(entry.pulses) +",\n";
-        returnString += "\"UsageDKK\":" + std::to_string(entry.price * entry.pulses) +"\n";
+        returnString += "\"UsageDKK\":" + std::to_string(price * entry.pulses / 1000) +"\n";
         returnString += "}";
         totalWHUsed += entry.pulses;
-        totalPrice += entry.price * entry.pulses;
+        totalPrice += price * entry.pulses / 1000;
         if (entry != historicEntries.back())
         {
           returnString += ",\n";
