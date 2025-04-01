@@ -1,10 +1,76 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <title>DEAN</title>
-        <h1>HELLOW</h1>
-    </head>
-    <body>
-        <p>Hello World!</p>
-    </body>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parameters</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 10px;
+            max-width: 800px;
+            line-height: 1.6;
+        }
+
+        a {
+            display: block;
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 18px;
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        h2 {
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 5px;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+<a href="http://localhost:18080/input">Lookup Site</a>
+
+<h2>PercentageGapInGroups</h2>
+<p>Percentage that is used to calculate the min/max value that determines which elements belong in a SmallGroup
+    together. E.G Which prices fall into the same "container".</p>
+<p>For example, if the first price of a day is 1000, a value of 5 will allow all prices in the interval: <strong>951 →
+    1050</strong>. With 951 being included, but 1050 not being included.</p>
+
+<h2>MinimumGapInGroupsCents</h2>
+<p>If this parameter yields a larger allowed interval than the result of PercentageGapInGroups, this value is used
+    instead.</p>
+<p>For example, if the first price is 1000 and it is set to 5%, any value above 50 will cause this parameter to be used
+    instead. A value of 100 would yield the interval: <strong>901 → 1100</strong>, with 901 being included, but 1100
+    not.</p>
+
+<h2>MaximumGapInGroupsCents</h2>
+<p>All grouping of prices will have at least 2 elements unless the difference between the prices is more than this
+    value.</p>
+<p>Example scenarios:</p>
+<ul>
+    <li>Prices: <strong>100, 140, 149</strong> → The first two will be in a group, the third will not.</li>
+    <li>Prices: <strong>100, 151, 120</strong> → 100 will be in a group by itself.</li>
+    <li>Prices: <strong>100, 150, 120</strong> → All three will be in the same group.</li>
+</ul>
+
+<h2>PercentageGapBetweenGroups</h2>
+<p>Percentage of gap between groups. If the average price of the cheapest group is 50 and this value is 5, we allow all
+    other groups with an average price of less than <strong>52.5</strong> to be in the same column.</p>
+
+<h2>MinimumGapBetweenGroups</h2>
+<p>If this value exceeds the percentage gap above, this value is used instead.</p>
+<p>For example, if this value is 50 and the cheapest group has an average of 50, then we allow all prices below <strong>100</strong>
+    to be in the same column.</p>
+</body>
 </html>

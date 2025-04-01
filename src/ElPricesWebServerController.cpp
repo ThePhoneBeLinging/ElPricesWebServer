@@ -15,37 +15,26 @@ ElPricesWebServerController::~ElPricesWebServerController()
 void ElPricesWebServerController::startServer()
 {
   app_.loglevel(crow::LogLevel::Error);
-  thread_ = std::thread(&ElPricesWebServerController::launch,this);
-}
-
-void ElPricesWebServerController::addServePoint(const std::string& path, const std::string& pathOfFileToServe)
-{
-  servePoints_.push_back(std::make_unique<ServePoint>(path, pathOfFileToServe));
-}
-
-void ElPricesWebServerController::addEndPoint(const std::string& path, const std::function<void()>& function)
-{
-  endPoints_.push_back(std::make_unique<EndPoint>(path, function));
+  thread_ = std::thread(&ElPricesWebServerController::launch, this);
 }
 
 void ElPricesWebServerController::launch()
 {
-  for (const auto& endPoint : servePoints_)
+  app_.route_dynamic("/")([]()-> std::string
   {
-      app_.route_dynamic(endPoint->getPath())([](){
-        auto page = Utility::readFromFile("../../FilesToServe/index.html");
-        return page;
-      });
-  }
+    auto page = Utility::readFromFile("../../FilesToServe/index.html");
+    return page;
+  });
+  app_.route_dynamic("/input")([]()-> std::string
+  {
+    auto page = Utility::readFromFile("../../FilesToServe/input.html");
+    return page;
+  });
 
-  for (const auto& endPoint : endPoints_)
+  app_.route_dynamic("/<string>/<string>")([](std::string from, std::string to)-> std::string
   {
-    app_.route_dynamic(endPoint->getPath())([&endPoint]()
-    {
-      endPoint->getFunction()();
-      return "";
-    });
-  }
+    return from + " " + to;
+  });
 
   app_.port(18080);
   app_.run();

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Date API Fetch</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            max-width: 400px;
+            margin: auto;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        input, button {
+            font-size: 1.2em;
+            padding: 8px;
+        }
+
+        #response {
+            margin-top: 20px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+    </style>
+</head>
+<body>
+<h2>Enter Two Dates</h2>
+<form id="dateForm">
+    <label for="date1">Date 1:</label>
+    <input type="date" id="date1" required>
+    <label for="hour1">Hour 1 (0-23):</label>
+    <input type="number" id="hour1" min="0" max="23" required>
+
+    <label for="date2">Date 2:</label>
+    <input type="date" id="date2" required>
+    <label for="hour2">Hour 2 (0-23):</label>
+    <input type="number" id="hour2" min="0" max="23" required>
+
+    <button type="submit">Submit</button>
+</form>
+<div id="response"></div>
+
+<script>
+    document.getElementById('dateForm').addEventListener('submit', async function (event) {
+        event.preventDefault();
+
+        const date1 = document.getElementById('date1').value;
+        const hour1 = document.getElementById('hour1').value;
+        const date2 = document.getElementById('date2').value;
+        const hour2 = document.getElementById('hour2').value;
+        const responseDiv = document.getElementById('response');
+
+        if (!date1 || !hour1 || !date2 || !hour2) {
+            responseDiv.textContent = "Please select both dates and hours.";
+            return;
+        }
+
+        try {
+            const request = `localhost:18080/${date1}-${hour1};${date2}-${hour2}`;
+            responseDiv.textContent = request;
+            return;
+            const response = await fetch(request);
+            const data = await response.json();
+            responseDiv.textContent = JSON.stringify(data, null, 2);
+        } catch (error) {
+            responseDiv.textContent = "Error fetching data. Please try again.";
+            console.error('Error:', error);
+        }
+    });
+</script>
+</body>
+</html>
