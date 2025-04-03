@@ -176,7 +176,7 @@ void ElPricesWebServerController::launch()
       return crow::response(400, msg);
     }
   });
-
-  app_.port(18080);
+  int webServerPort = ConfigController::getConfigInt("WebServerPort");
+  app_.port(webServerPort);
   app_.run();
 }
