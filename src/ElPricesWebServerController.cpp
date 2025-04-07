@@ -141,6 +141,7 @@ void ElPricesWebServerController::launch()
       }
       int totalWHUsed = 0;
       int totalPrice = 0;
+      // Create JSON string with a list of historicEntries
       std::string returnString;
       returnString += "{\n";
       returnString += "\"historicPrices\": ";
