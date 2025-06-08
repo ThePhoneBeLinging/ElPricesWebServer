@@ -26,18 +26,21 @@ void DataController::setTimeJSONObject(const nlohmann::json& timeJSONObject)
 {
   std::lock_guard lock(mutex_);
   timeJSONObject_ = timeJSONObject;
+  notifyPower();
 }
 
 void DataController::setPriceJSONObject(const nlohmann::json& priceJSONObject)
 {
   std::lock_guard lock(mutex_);
   priceJSONObject_ = priceJSONObject;
+  notifyPower();
 }
 
 void DataController::setPowerJSONObject(const nlohmann::json& powerJSONObject)
 {
   std::lock_guard lock(mutex_);
   powerJSONObject_ = powerJSONObject;
+  notifyPower();
 }
 
 void DataController::addSubscriber(crow::websocket::connection* res)
