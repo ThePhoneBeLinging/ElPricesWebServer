@@ -7,6 +7,7 @@
 #include <DatabaseAccessController/DatabaseAccessController.h>
 
 #include "HistoricEntry.h"
+#include "../../../src/DataController.h"
 #include "Utility/ConfigController.h"
 #include "Utility/Utility.h"
 
@@ -27,12 +28,36 @@ void ElPricesWebServerController::launch()
 {
   CROW_ROUTE(app_, "/")([]()-> std::string
   {
-    auto page = Utility::readFromFile("../../FilesToServe/index.html");
+    auto page = Utility::readFromFile("../../FilesToServe/example.html");
     return page;
   });
   CROW_ROUTE(app_, "/input")([]()-> std::string
   {
     auto page = Utility::readFromFile("../../FilesToServe/input.html");
+    return page;
+  });
+
+  CROW_ROUTE(app_, "/api/time")([]()-> std::string
+  {
+    auto page = DataController::getTimeJSONObject().dump();
+    return page;
+  });
+
+  CROW_ROUTE(app_, "/api/power")([]()-> std::string
+  {
+    auto page = DataController::getPowerJSONObject().dump();
+    return page;
+  });
+
+  CROW_ROUTE(app_, "/api/power/subscribe")
+  ([]() -> std::string
+  {
+    return DataController::getPowerJSONObject().dump();
+  });
+
+  CROW_ROUTE(app_, "/api/prices")([]()-> std::string
+  {
+    auto page = DataController::getPriceJSONObject().dump();
     return page;
   });
 
