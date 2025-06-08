@@ -7,7 +7,7 @@
 #include <DatabaseAccessController/DatabaseAccessController.h>
 
 #include "HistoricEntry.h"
-#include "../../../src/DataController.h"
+#include "include/ElPricesWebServer/DataController.h"
 #include "Utility/ConfigController.h"
 #include "Utility/Utility.h"
 

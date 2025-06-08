@@ -19,6 +19,8 @@ add_library(ElPricesWebServer STATIC
         ElPricesWebServerController.cpp
         include/ElPricesWebServer/ElPricesWebServerController.h
         HistoricEntry.h
+        DataController.cpp
+        include/ElPricesWebServer/DataController.h
 )
 
 target_link_libraries(ElPricesWebServer PUBLIC Utility)
