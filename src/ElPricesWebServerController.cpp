@@ -26,9 +26,14 @@ void ElPricesWebServerController::startServer()
 
 void ElPricesWebServerController::launch()
 {
-  CROW_ROUTE(app_, "/")([]()-> std::string
+  CROW_ROUTE(app_, "/example")([]()-> std::string
   {
     auto page = Utility::readFromFile("../../FilesToServe/example.html");
+    return page;
+  });
+  CROW_ROUTE(app_, "/")([]()-> std::string
+  {
+    auto page = Utility::readFromFile("../../FilesToServe/index.html");
     return page;
   });
   CROW_ROUTE(app_, "/input")([]()-> std::string
@@ -45,6 +50,7 @@ void ElPricesWebServerController::launch()
     })
   .onmessage([&](crow::websocket::connection& /*conn*/, const std::string& data, bool is_binary)
   {
+    std::this_thread::sleep_for(std::chrono::seconds(1));
     DataController::notifyPower();
   })
     .onclose([&](crow::websocket::connection& conn, const std::string& reason, uint16_t)
