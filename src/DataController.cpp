@@ -24,22 +24,25 @@ nlohmann::json DataController::getPowerJSONObject()
 
 void DataController::setTimeJSONObject(const nlohmann::json& timeJSONObject)
 {
-  std::lock_guard lock(mutex_);
+  std::unique_lock lock(mutex_);
   timeJSONObject_ = timeJSONObject;
+  lock.unlock();
   notifyPower();
 }
 
 void DataController::setPriceJSONObject(const nlohmann::json& priceJSONObject)
 {
-  std::lock_guard lock(mutex_);
+  std::unique_lock lock(mutex_);
   priceJSONObject_ = priceJSONObject;
+  lock.unlock();
   notifyPower();
 }
 
 void DataController::setPowerJSONObject(const nlohmann::json& powerJSONObject)
 {
-  std::lock_guard lock(mutex_);
+  std::unique_lock lock(mutex_);
   powerJSONObject_ = powerJSONObject;
+  lock.unlock();
   notifyPower();
 }
 
