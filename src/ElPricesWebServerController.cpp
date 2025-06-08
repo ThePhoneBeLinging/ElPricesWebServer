@@ -37,23 +37,21 @@ void ElPricesWebServerController::launch()
     return page;
   });
 
-  CROW_ROUTE(app_, "/api/time")([]()-> std::string
+  CROW_WEBSOCKET_ROUTE(app_, "/ws")
+    .onopen([&](crow::websocket::connection& conn){
+        {
+            DataController::addSubscriber(&conn);
+        }
+    })
+  .onmessage([&](crow::websocket::connection& /*conn*/, const std::string& data, bool is_binary)
   {
-    auto page = DataController::getTimeJSONObject().dump();
-    return page;
-  });
+    DataController::notifyPower();
+  })
+    .onclose([&](crow::websocket::connection& conn, const std::string& reason, uint16_t)
+    {
+      DataController::removeSubscriber(&conn);
+    });
 
-  CROW_ROUTE(app_, "/api/power")([]()-> std::string
-  {
-    auto page = DataController::getPowerJSONObject().dump();
-    return page;
-  });
-
-  CROW_ROUTE(app_, "/api/power/subscribe")
-  ([]() -> std::string
-  {
-    return DataController::getPowerJSONObject().dump();
-  });
 
   CROW_ROUTE(app_, "/api/prices")([]()-> std::string
   {
