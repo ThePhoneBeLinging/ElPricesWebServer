@@ -7,6 +7,7 @@
 #include <DatabaseAccessController/DatabaseAccessController.h>
 
 #include "HistoricEntry.h"
+#include "include/ElPricesWebServer/DataController.h"
 #include "Utility/ConfigController.h"
 #include "Utility/Utility.h"
 
@@ -25,6 +26,11 @@ void ElPricesWebServerController::startServer()
 
 void ElPricesWebServerController::launch()
 {
+  CROW_ROUTE(app_, "/example")([]()-> std::string
+  {
+    auto page = Utility::readFromFile("../../FilesToServe/example.html");
+    return page;
+  });
   CROW_ROUTE(app_, "/")([]()-> std::string
   {
     auto page = Utility::readFromFile("../../FilesToServe/index.html");
@@ -33,6 +39,29 @@ void ElPricesWebServerController::launch()
   CROW_ROUTE(app_, "/input")([]()-> std::string
   {
     auto page = Utility::readFromFile("../../FilesToServe/input.html");
+    return page;
+  });
+
+  CROW_WEBSOCKET_ROUTE(app_, "/ws")
+    .onopen([&](crow::websocket::connection& conn){
+        {
+            DataController::addSubscriber(&conn);
+        }
+    })
+  .onmessage([&](crow::websocket::connection& /*conn*/, const std::string& data, bool is_binary)
+  {
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+    DataController::notifyPower();
+  })
+    .onclose([&](crow::websocket::connection& conn, const std::string& reason, uint16_t)
+    {
+      DataController::removeSubscriber(&conn);
+    });
+
+
+  CROW_ROUTE(app_, "/api/prices")([]()-> std::string
+  {
+    auto page = DataController::getPriceJSONObject().dump();
     return page;
   });
 
