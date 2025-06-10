@@ -57,6 +57,26 @@ void DataController::removeSubscriber(crow::websocket::connection* res)
   subscribers_.erase(res);
 }
 
+void DataController::initialLoad()
+{
+  std::lock_guard lock(mutex_);
+  for (auto res : subscribers_)
+  {
+    try
+    {
+      nlohmann::json json;
+      json["Power"] = powerJSONObject_;
+      json["Prices"] = priceJSONObject_;
+      json["Time"] = timeJSONObject_;
+      res->send_text(json.dump());
+    }
+    catch (...)
+    {
+      // Optional: log the error
+    }
+  }
+}
+
 void DataController::notifyTime()
 {
   std::lock_guard lock(mutex_);

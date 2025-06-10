@@ -23,6 +23,8 @@ public:
   static void addSubscriber(crow::websocket::connection* res);
   static void removeSubscriber(crow::websocket::connection* res);
 
+  static void initialLoad();
+
 private:
   static void notifyTime();
   static void notifyPrice();
