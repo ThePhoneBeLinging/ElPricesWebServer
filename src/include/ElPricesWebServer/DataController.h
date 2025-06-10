@@ -6,8 +6,6 @@
 #define DATACONTROLLER_H
 #include <mutex>
 #include <unordered_set>
-
-#include "crow/http_response.h"
 #include "crow/websocket.h"
 #include "nlohmann/json.hpp"
 
