@@ -22,18 +22,17 @@ public:
 
   static void addSubscriber(crow::websocket::connection* res);
   static void removeSubscriber(crow::websocket::connection* res);
-  static void notifyPower();
 
 private:
+  static void notifyTime();
+  static void notifyPrice();
+  static void notifyPower();
   static inline nlohmann::json timeJSONObject_;
   static inline nlohmann::json priceJSONObject_;
   static inline nlohmann::json powerJSONObject_;
   static inline std::mutex mutex_;
   static inline std::unordered_set<crow::websocket::connection*> subscribers_;
-
-
 };
-
 
 
 #endif //DATACONTROLLER_H

@@ -27,7 +27,7 @@ void DataController::setTimeJSONObject(const nlohmann::json& timeJSONObject)
   std::unique_lock lock(mutex_);
   timeJSONObject_ = timeJSONObject;
   lock.unlock();
-  notifyPower();
+  notifyTime();
 }
 
 void DataController::setPriceJSONObject(const nlohmann::json& priceJSONObject)
@@ -35,7 +35,7 @@ void DataController::setPriceJSONObject(const nlohmann::json& priceJSONObject)
   std::unique_lock lock(mutex_);
   priceJSONObject_ = priceJSONObject;
   lock.unlock();
-  notifyPower();
+  notifyPrice();
 }
 
 void DataController::setPowerJSONObject(const nlohmann::json& powerJSONObject)
@@ -57,17 +57,49 @@ void DataController::removeSubscriber(crow::websocket::connection* res)
   subscribers_.erase(res);
 }
 
+void DataController::notifyTime()
+{
+  std::lock_guard lock(mutex_);
+  for (auto res : subscribers_)
+  {
+    try
+    {
+      res->send_text(timeJSONObject_.dump());
+    }
+    catch (...)
+    {
+      // Optional: log the error
+    }
+  }
+}
+
+void DataController::notifyPrice()
+{
+  std::lock_guard lock(mutex_);
+  for (auto res : subscribers_)
+  {
+    try
+    {
+      res->send_text(priceJSONObject_.dump());
+    }
+    catch (...)
+    {
+      // Optional: log the error
+    }
+  }
+}
+
 void DataController::notifyPower()
 {
   std::lock_guard lock(mutex_);
-  for (auto res : subscribers_) {
-    try {
-      nlohmann::json combined;
-      combined["Price"] = priceJSONObject_;
-      combined["Power"] = powerJSONObject_;
-      combined["Time"] = timeJSONObject_;
-      res->send_text(combined.dump());
-    } catch (...) {
+  for (auto res : subscribers_)
+  {
+    try
+    {
+      res->send_text(powerJSONObject_.dump());
+    }
+    catch (...)
+    {
       // Optional: log the error
     }
   }
