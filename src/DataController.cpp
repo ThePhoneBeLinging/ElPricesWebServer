@@ -66,7 +66,7 @@ void DataController::initialLoad()
     {
       nlohmann::json json;
       json["Power"] = powerJSONObject_;
-      json["Prices"] = priceJSONObject_;
+      json["Price"] = priceJSONObject_;
       json["Time"] = timeJSONObject_;
       res->send_text(json.dump());
     }
