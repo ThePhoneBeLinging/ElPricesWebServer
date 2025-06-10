@@ -84,7 +84,9 @@ void DataController::notifyTime()
   {
     try
     {
-      res->send_text(timeJSONObject_.dump());
+      nlohmann::json json;
+      json["Time"] = timeJSONObject_;
+      res->send_text(json.dump());
     }
     catch (...)
     {
@@ -100,7 +102,9 @@ void DataController::notifyPrice()
   {
     try
     {
-      res->send_text(priceJSONObject_.dump());
+      nlohmann::json json;
+      json["Price"] = priceJSONObject_;
+      res->send_text(json.dump());
     }
     catch (...)
     {
@@ -116,7 +120,9 @@ void DataController::notifyPower()
   {
     try
     {
-      res->send_text(powerJSONObject_.dump());
+      nlohmann::json json;
+      json["Power"] = powerJSONObject_;
+      res->send_text(json.dump());
     }
     catch (...)
     {
