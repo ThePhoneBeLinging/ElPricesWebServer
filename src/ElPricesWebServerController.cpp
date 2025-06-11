@@ -43,20 +43,21 @@ void ElPricesWebServerController::launch()
   });
 
   CROW_WEBSOCKET_ROUTE(app_, "/ws")
-    .onopen([&](crow::websocket::connection& conn){
-        {
-            DataController::addSubscriber(&conn);
-        }
-    })
+    .onopen([&](crow::websocket::connection& conn)
+                                   {
+                                     {
+                                       DataController::addSubscriber(&conn);
+                                     }
+                                   })
   .onmessage([&](crow::websocket::connection& /*conn*/, const std::string& data, bool is_binary)
-  {
-    std::this_thread::sleep_for(std::chrono::seconds(1));
-    DataController::notifyPower();
-  })
+                                   {
+                                     std::this_thread::sleep_for(std::chrono::seconds(1));
+                                     DataController::initialLoad();
+                                   })
     .onclose([&](crow::websocket::connection& conn, const std::string& reason, uint16_t)
-    {
-      DataController::removeSubscriber(&conn);
-    });
+                                   {
+                                     DataController::removeSubscriber(&conn);
+                                   });
 
 
   CROW_ROUTE(app_, "/api/prices")([]()-> std::string
@@ -119,9 +120,9 @@ void ElPricesWebServerController::launch()
         dayString += std::to_string(year1);
 
         std::string getPriceQuery = "SELECT * FROM Prices WHERE Hour == ? AND Date==?";
-        SQLite::Statement getPriceStatement(*priceDBLock->getDatabase(),getPriceQuery);
-        getPriceStatement.bind(1,hour1);
-        getPriceStatement.bind(2,dayString);
+        SQLite::Statement getPriceStatement(*priceDBLock->getDatabase(), getPriceQuery);
+        getPriceStatement.bind(1, hour1);
+        getPriceStatement.bind(2, dayString);
 
         while (getPriceStatement.executeStep())
         {
@@ -130,17 +131,17 @@ void ElPricesWebServerController::launch()
         }
 
         std::string getPulseIDQuery = "SELECT ID FROM PulseDates WHERE Year==? AND Month==? AND Day==?";
-        SQLite::Statement getPulseIDStatement(*pulseDBLock->getDatabase(),getPulseIDQuery);
-        getPulseIDStatement.bind(1,year1);
-        getPulseIDStatement.bind(2,month1);
-        getPulseIDStatement.bind(3,day1);
+        SQLite::Statement getPulseIDStatement(*pulseDBLock->getDatabase(), getPulseIDQuery);
+        getPulseIDStatement.bind(1, year1);
+        getPulseIDStatement.bind(2, month1);
+        getPulseIDStatement.bind(3, day1);
         while (getPulseIDStatement.executeStep())
         {
           int pulseDateID = getPulseIDStatement.getColumn(0).getInt();
           std::string getPulsesQuery = "SELECT * FROM PulseHours WHERE PulseDateID==? AND Hour==?";
-          SQLite::Statement getPulsesStatement(*pulseDBLock->getDatabase(),getPulsesQuery);
-          getPulsesStatement.bind(1,pulseDateID);
-          getPulsesStatement.bind(2,hour1);
+          SQLite::Statement getPulsesStatement(*pulseDBLock->getDatabase(), getPulsesQuery);
+          getPulsesStatement.bind(1, pulseDateID);
+          getPulsesStatement.bind(2, hour1);
           while (getPulsesStatement.executeStep())
           {
             historicEntry.pulses = getPulsesStatement.getColumn(2).getInt();
@@ -179,13 +180,13 @@ void ElPricesWebServerController::launch()
       {
         double price = entry.price / 10000.0;
         returnString += "{\n";
-        returnString += "\"Year\":" + std::to_string(entry.year) +",\n";
-        returnString += "\"Month\":" + std::to_string(entry.month) +",\n";
-        returnString += "\"Day\":" + std::to_string(entry.day) +",\n";
-        returnString += "\"Hour\":" + std::to_string(entry.hour) +",\n";
-        returnString += "\"Price\":" + std::to_string(price) +",\n";
-        returnString += "\"Pulses\":" + std::to_string(entry.pulses) +",\n";
-        returnString += "\"UsageDKK\":" + std::to_string(price * entry.pulses / 1000) +"\n";
+        returnString += "\"Year\":" + std::to_string(entry.year) + ",\n";
+        returnString += "\"Month\":" + std::to_string(entry.month) + ",\n";
+        returnString += "\"Day\":" + std::to_string(entry.day) + ",\n";
+        returnString += "\"Hour\":" + std::to_string(entry.hour) + ",\n";
+        returnString += "\"Price\":" + std::to_string(price) + ",\n";
+        returnString += "\"Pulses\":" + std::to_string(entry.pulses) + ",\n";
+        returnString += "\"UsageDKK\":" + std::to_string(price * entry.pulses / 1000) + "\n";
         returnString += "}";
         totalWHUsed += entry.pulses;
         totalPrice += price * entry.pulses / 1000;
@@ -195,8 +196,8 @@ void ElPricesWebServerController::launch()
         }
       }
       returnString += "],\n";
-      returnString += "\"TotalPrice\":" + std::to_string(totalPrice) +",\n";
-      returnString += "\"TotalWH\":" + std::to_string(totalWHUsed) +"\n";
+      returnString += "\"TotalPrice\":" + std::to_string(totalPrice) + ",\n";
+      returnString += "\"TotalWH\":" + std::to_string(totalWHUsed) + "\n";
       returnString += "}";
       return crow::response(returnString);
     }
