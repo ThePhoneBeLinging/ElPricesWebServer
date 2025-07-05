@@ -60,18 +60,6 @@ void ElPricesWebServerController::launch()
                                    });
 
 
-  CROW_ROUTE(app_, "/api/prices")([]()-> std::string
-  {
-    auto page = DataController::getPriceJSONObject().dump();
-    return page;
-  });
-
-  CROW_ROUTE(app_, "/reloadConfig")([]()-> std::string
-  {
-    ConfigController::loadConfig("../../Resources/config.json");
-    return "";
-  });
-
   CROW_ROUTE(app_, "/getDataBetweenDates")([](const crow::request& req)
   {
     std::vector<HistoricEntry> historicEntries;
