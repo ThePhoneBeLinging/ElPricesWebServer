@@ -158,7 +158,7 @@ void ElPricesWebServerController::launch()
         }
       }
       int totalWHUsed = 0;
-      int totalPrice = 0;
+      double totalPrice = 0;
       // Create JSON string with a list of historicEntries
       std::string returnString;
       returnString += "{\n";
@@ -166,7 +166,7 @@ void ElPricesWebServerController::launch()
       returnString += "[\n";
       for (auto entry : historicEntries)
       {
-        double price = entry.price / 10000.0;
+        double price = static_cast<double>(entry.price) / 10000.0;
         returnString += "{\n";
         returnString += "\"Year\":" + std::to_string(entry.year) + ",\n";
         returnString += "\"Month\":" + std::to_string(entry.month) + ",\n";
@@ -184,7 +184,7 @@ void ElPricesWebServerController::launch()
         }
       }
       returnString += "],\n";
-      returnString += "\"TotalPrice\":" + std::to_string(totalPrice) + ",\n";
+      returnString += "\"TotalPrice\":" + fmt::format("{:.2f}\n", totalPrice);
       returnString += "\"TotalWH\":" + std::to_string(totalWHUsed) + "\n";
       returnString += "}";
       return crow::response(returnString);
