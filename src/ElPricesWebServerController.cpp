@@ -10,6 +10,7 @@
 #include "include/ElPricesWebServer/DataController.h"
 #include "Utility/ConfigController.h"
 #include "Utility/Utility.h"
+#include <fmt/format.h>
 
 
 ElPricesWebServerController::~ElPricesWebServerController()

@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.25)
 project(ElPricesWebServer)
 
 set(CMAKE_CXX_STANDARD 20)
-
+find_package(fmt)
 include(FetchContent)
 FetchContent_Declare(json URL https://github.com/nlohmann/json/releases/download/v3.11.3/json.tar.xz)
 FetchContent_MakeAvailable(json)
@@ -28,3 +28,4 @@ target_link_libraries(ElPricesWebServer PUBLIC DatabaseAccessController)
 target_include_directories(ElPricesWebServer PUBLIC include)
 target_link_libraries(ElPricesWebServer PRIVATE nlohmann_json)
 target_link_libraries(ElPricesWebServer PUBLIC Crow)
+target_link_libraries(ElPricesWebServer PUBLIC fmt::fmt)
