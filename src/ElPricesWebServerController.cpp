@@ -185,7 +185,7 @@ void ElPricesWebServerController::launch()
         }
       }
       returnString += "],\n";
-      returnString += "\"TotalPrice\":" + fmt::format("{:.2f}\n", totalPrice);
+      returnString += "\"TotalPrice\":" + fmt::format("{:.2f}\n, ", totalPrice);
       returnString += "\"TotalWH\":" + std::to_string(totalWHUsed) + "\n";
       returnString += "}";
       return crow::response(returnString);
